@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitcoin & Stacks Wallet Connection Template</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fab fa-bitcoin"></i> Wallet Connection Template</h1>
+                <p>Connect to Bitcoin & Stacks wallets to view your balances and transaction history</p>
+            </div>
+        </header>
+
+        <!-- Connection Status -->
+        <div class="connection-status" id="connectionStatus">
+            <div class="status-card">
+                <div class="status-info">
+                    <span class="status-indicator" id="statusIndicator">
+                        <i class="fas fa-circle"></i>
+                    </span>
+                    <span class="status-text" id="statusText">Not Connected</span>
+                </div>
+                <div class="connection-actions">
+                    <button class="btn btn-primary" id="connectBtn">
+                        <i class="fas fa-wallet"></i> Connect Wallet
+                    </button>
+                    <button class="btn btn-secondary hidden" id="disconnectBtn">
+                        <i class="fas fa-sign-out-alt"></i> Disconnect
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Provider Selection Modal -->
+        <div class="modal hidden" id="providerModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Select Wallet Provider</h3>
+                    <button class="modal-close" id="closeModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="provider-grid" id="providerGrid">
+                        <!-- Provider buttons will be dynamically added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wallet Information -->
+        <div class="wallet-info hidden" id="walletInfo">
+            <!-- Connected Wallet Details -->
+            <div class="wallet-details">
+                <h3><i class="fas fa-info-circle"></i> Connected Wallet</h3>
+                <div class="wallet-card">
+                    <div class="wallet-provider">
+                        <strong>Provider:</strong> <span id="walletProvider">-</span>
+                    </div>
+                    <div class="wallet-addresses">
+                        <div class="address-item">
+                            <label>Payment Address:</label>
+                            <span class="address" id="paymentAddress">-</span>
+                            <button class="copy-btn" onclick="copyToClipboard('paymentAddress')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="address-item">
+                            <label>Ordinals Address:</label>
+                            <span class="address" id="ordinalsAddress">-</span>
+                            <button class="copy-btn" onclick="copyToClipboard('ordinalsAddress')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <div class="address-item">
+                            <label>Stacks Address:</label>
+                            <span class="address" id="stacksAddress">-</span>
+                            <button class="copy-btn" onclick="copyToClipboard('stacksAddress')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Balance Tabs -->
+            <div class="balance-section">
+                <div class="tab-container">
+                    <div class="tab-nav">
+                        <button class="tab-btn active" data-tab="bitcoin">
+                            <i class="fab fa-bitcoin"></i> Bitcoin
+                        </button>
+                        <button class="tab-btn" data-tab="stacks">
+                            <i class="fas fa-layer-group"></i> Stacks
+                        </button>
+                        <button class="tab-btn" data-tab="ordinals">
+                            <i class="fas fa-gem"></i> Ordinals
+                        </button>
+                        <button class="tab-btn" data-tab="runes">
+                            <i class="fas fa-scroll"></i> Runes
+                        </button>
+                    </div>
+
+                    <!-- Bitcoin Balance Tab -->
+                    <div class="tab-content active" id="bitcoin-tab">
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <h3><i class="fab fa-bitcoin"></i> Bitcoin Balance</h3>
+                                <button class="refresh-btn" onclick="refreshBitcoinBalance()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="balance-grid">
+                                <div class="balance-item">
+                                    <label>Confirmed:</label>
+                                    <span class="balance-value" id="confirmedBalance">-</span>
+                                    <span class="balance-unit">BTC</span>
+                                </div>
+                                <div class="balance-item">
+                                    <label>Unconfirmed:</label>
+                                    <span class="balance-value" id="unconfirmedBalance">-</span>
+                                    <span class="balance-unit">BTC</span>
+                                </div>
+                                <div class="balance-item total">
+                                    <label>Total:</label>
+                                    <span class="balance-value" id="totalBalance">-</span>
+                                    <span class="balance-unit">BTC</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stacks Balance Tab -->
+                    <div class="tab-content" id="stacks-tab">
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <h3><i class="fas fa-layer-group"></i> Stacks Balance</h3>
+                                <button class="refresh-btn" onclick="refreshStacksBalance()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="balance-grid">
+                                <div class="balance-item">
+                                    <label>STX Balance:</label>
+                                    <span class="balance-value" id="stxBalance">-</span>
+                                    <span class="balance-unit">STX</span>
+                                </div>
+                                <div class="balance-item">
+                                    <label>Locked STX:</label>
+                                    <span class="balance-value" id="lockedStxBalance">-</span>
+                                    <span class="balance-unit">STX</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ordinals Balance Tab -->
+                    <div class="tab-content" id="ordinals-tab">
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <h3><i class="fas fa-gem"></i> Ordinals Collection</h3>
+                                <button class="refresh-btn" onclick="refreshOrdinals()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="ordinals-grid" id="ordinalsGrid">
+                                <div class="no-data">
+                                    <i class="fas fa-gem"></i>
+                                    <p>No ordinals data available</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Runes Balance Tab -->
+                    <div class="tab-content" id="runes-tab">
+                        <div class="balance-card">
+                            <div class="balance-header">
+                                <h3><i class="fas fa-scroll"></i> Runes Tokens</h3>
+                                <button class="refresh-btn" onclick="refreshRunes()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <div class="runes-grid" id="runesGrid">
+                                <div class="no-data">
+                                    <i class="fas fa-scroll"></i>
+                                    <p>No runes data available</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction History -->
+            <div class="transaction-section">
+                <div class="transaction-header">
+                    <h3><i class="fas fa-history"></i> Transaction History</h3>
+                    <div class="transaction-controls">
+                        <select id="transactionType">
+                            <option value="all">All Transactions</option>
+                            <option value="bitcoin">Bitcoin</option>
+                            <option value="stacks">Stacks</option>
+                            <option value="ordinals">Ordinals</option>
+                        </select>
+                        <button class="refresh-btn" onclick="refreshTransactionHistory()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="transaction-table-container">
+                    <table class="transaction-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Hash</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionTableBody">
+                            <tr>
+                                <td colspan="6" class="no-data">
+                                    <i class="fas fa-history"></i>
+                                    <p>No transaction history available</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pagination" id="transactionPagination">
+                    <!-- Pagination controls will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Messages -->
+        <div class="error-container hidden" id="errorContainer">
+            <div class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span id="errorText"></span>
+                <button class="error-close" onclick="hideError()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading Overlay -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2025 Bitcoin & Stacks Wallet Template. Built with <a href="https://github.com/secretkeylabs/sats-connect" target="_blank">sats-connect</a></p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
